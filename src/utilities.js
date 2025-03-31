@@ -1,6 +1,25 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+import drawdown from "./drawdown.js";
+import { page } from "./templates.js";
+
+// Read the indicated markdown file and return an HTML page for it
+export async function htmlPageForMarkdownFile(markdownPath) {
+  const markdownDocument = await readMarkdownDocument(markdownPath);
+  const htmlDocument = markdownDocumentToHtml(markdownDocument);
+  const markdownFileName = path.basename(markdownPath);
+  const htmlFileName = markdownFileName.replace(/\.md$/, ".html");
+  return page(htmlDocument, htmlFileName);
+}
+
 // Create a new object by applying a function to each [key, value] pair
-export function mapObject(obj, fn) {
-  return Object.fromEntries(Object.entries(obj).map(fn));
+export function mapEntries(object, fn) {
+  return Object.fromEntries(Object.entries(object).map(fn));
+}
+
+// Create a new object by mapping each value
+export function mapValues(object, fn) {
+  return mapEntries(object, ([key, value]) => [key, fn(value, key)]);
 }
 
 // If the text has front matter, parse it and return the object along with a
@@ -26,6 +45,22 @@ export function markdownDocument(content) {
     }
   }
   return Object.assign({ body: text }, data);
+}
+
+// Convert a single markdown document to HTML
+export function markdownDocumentToHtml(markdownDocument) {
+  return {
+    ...markdownDocument,
+    body: drawdown(markdownDocument.body),
+  };
+}
+
+// Convert a collection of markdown documents to HTML
+export function markdownDocumentsToHtml(markdownDocuments) {
+  return mapEntries(markdownDocuments, ([key, document]) => [
+    key.replace(/\.md$/, ".html"),
+    markdownDocumentToHtml(document),
+  ]);
 }
 
 /**
@@ -59,4 +94,14 @@ export function paginate(object, size = 10) {
   }
 
   return paginated;
+}
+
+export async function readMarkdownDocument(filePath) {
+  const markdown = await fs.readFile(filePath);
+  return markdownDocument(markdown);
+}
+
+export async function readMarkdownDocumentToHtml(filePath) {
+  const markdownDocument = await readMarkdownDocument(filePath);
+  return markdownDocumentToHtml(markdownDocument);
 }
