@@ -44,7 +44,7 @@ export default function markdown(src) {
   src = src.replace(rx_listjoin, "");
 
   // code
-  src = src.replace(rx_code, function (all, p1, p2, p3, p4) {
+  src = src.replace(rx_code, (all, p1, p2, p3, p4) => {
     stash[--si] = element(
       "pre",
       element("code", p3 || p4.replace(/^    /gm, ""))
@@ -53,7 +53,7 @@ export default function markdown(src) {
   });
 
   // link or image
-  src = src.replace(rx_link, function (all, p1, p2, p3, p4, p5, p6) {
+  src = src.replace(rx_link, (all, p1, p2, p3, p4, p5, p6) => {
     stash[--si] = p4
       ? p2
         ? `<img src="${p4}" alt="${p3}"/>`
@@ -63,18 +63,18 @@ export default function markdown(src) {
   });
 
   // table
-  src = src.replace(rx_table, function (all, table) {
+  src = src.replace(rx_table, (all, table) => {
     var sep = table.match(rx_thead)[1];
     return (
       "\n" +
       element(
         "table",
-        table.replace(rx_row, function (row, ri) {
+        table.replace(rx_row, (row, ri) => {
           return row == sep
             ? ""
             : element(
                 "tr",
-                row.replace(rx_cell, function (all, cell, ci) {
+                row.replace(rx_cell, (all, cell, ci) => {
                   return ci
                     ? element(
                         sep && !ri ? "th" : "td",
@@ -89,17 +89,17 @@ export default function markdown(src) {
   });
 
   // heading
-  src = src.replace(rx_heading, function (all, _, p1, p2) {
+  src = src.replace(rx_heading, (all, _, p1, p2) => {
     return _ + element(`h${p1.length}`, unesc(highlight(p2)));
   });
 
   // paragraph
-  src = src.replace(rx_para, function (all, content) {
+  src = src.replace(rx_para, (all, content) => {
     return element("p", unesc(highlight(content)));
   });
 
   // stash
-  src = src.replace(rx_stash, function (all) {
+  src = src.replace(rx_stash, (all) => {
     return stash[parseInt(all)];
   });
 
@@ -107,7 +107,7 @@ export default function markdown(src) {
 }
 
 function blockquote(src) {
-  return src.replace(rx_blockquote, function (all, content) {
+  return src.replace(rx_blockquote, (all, content) => {
     return element(
       "blockquote",
       blockquote(highlight(content.replace(/^ *&gt; */gm, "")))
@@ -122,7 +122,7 @@ function element(tag, content) {
 function highlight(src) {
   return src.replace(
     rx_highlight,
-    function (all, _, p1, emp, sub, sup, small, big, p2, content) {
+    (all, _, p1, emp, sub, sup, small, big, p2, content) => {
       return (
         _ +
         element(
@@ -149,7 +149,7 @@ function highlight(src) {
 }
 
 function list(src) {
-  return src.replace(rx_list, function (all, ind, ol, num, low, content) {
+  return src.replace(rx_list, (all, ind, ol, num, low, content) => {
     var entry = element(
       "li",
       highlight(
