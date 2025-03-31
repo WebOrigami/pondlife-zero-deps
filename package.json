@@ -1,0 +1,7 @@
+{
+  "name": "pondlife-zero-deps",
+  "type": "module",
+  "scripts": {
+    "build": "node src/build.js"
+  }
+}
