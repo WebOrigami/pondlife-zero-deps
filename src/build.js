@@ -1,9 +1,7 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import * as files from "./files.js";
+import { clearFiles, writeFiles } from "./files.js";
 import siteFiles from "./site.js";
 
-const modulePath = fileURLToPath(import.meta.url);
-const buildFolder = path.resolve(modulePath, "../../build");
-await files.clearFiles(buildFolder);
-await files.writeFiles(buildFolder, siteFiles);
+// Build writes the site resources to the build folder
+const buildFolder = new URL("../build", import.meta.url).pathname;
+await clearFiles(buildFolder);
+await writeFiles(buildFolder, siteFiles);

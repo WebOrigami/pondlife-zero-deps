@@ -1,12 +1,9 @@
-import path from "node:path";
-import { fileURLToPath } from "url";
-import * as files from "./files.js";
+import { readFiles } from "./files.js";
 import { mapValues, markdownDocument } from "./utilities.js";
 
 // Read markdown files
-const modulePath = fileURLToPath(import.meta.url);
-const markdownFolder = path.resolve(modulePath, "../../markdown");
-const markdownFiles = await files.readFiles(markdownFolder);
+const markdownFolder = new URL("../markdown", import.meta.url).pathname;
+const markdownFiles = await readFiles(markdownFolder);
 
 // Convert to markdown documents, also parse date from file name
 const markdownDocuments = mapValues(markdownFiles, (buffer, key) => ({

@@ -23,8 +23,8 @@ export function mapValues(object, fn) {
 }
 
 // If the text has front matter, parse it and return the object along with a
-// @text property holding the body text. If there's no front matter, the object
-// will just have @text.
+// `body` property holding the body text. If there's no front matter, the object
+// will just have `body`.
 export function markdownDocument(content) {
   let text = String(content);
   let data;
@@ -99,9 +99,4 @@ export function paginate(object, size = 10) {
 export async function readMarkdownDocument(filePath) {
   const markdown = await fs.readFile(filePath);
   return markdownDocument(markdown);
-}
-
-export async function readMarkdownDocumentToHtml(filePath) {
-  const markdownDocument = await readMarkdownDocument(filePath);
-  return markdownDocumentToHtml(markdownDocument);
 }

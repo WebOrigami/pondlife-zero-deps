@@ -11,18 +11,19 @@ import {
   paginate,
 } from "./utilities.js";
 
+// Return the path relative to this module
 const relativePath = (filePath) => new URL(filePath, import.meta.url).pathname;
 
 // Convert markdown documents to HTML
 const posts = markdownDocumentsToHtml(markdownDocuments);
 
-// Paginated pages
+// Group posts into sets of 10
 const pages = mapEntries(paginate(posts, 10), ([index, paginated]) => [
-  `${parseInt(index) + 1}.html`,
+  `${parseInt(index) + 1}.html`, // names will be `1.html`, `2.html`, ...
   multiPostPage(paginated),
 ]);
 
-// Convert posts to feed
+// Convert posts to a feed object in JSON Feed schema
 const feed = jsonFeed(posts);
 
 // Consolidate all site resources into a single object
@@ -32,7 +33,7 @@ export default {
   "feed.json": JSON.stringify(feed, null, 2),
   "feed.xml": rss(feed),
   images: await files.readFiles(relativePath("../images")),
-  "index.html": pages["1.html"],
+  "index.html": pages["1.html"], // same as first page in pages area
   pages,
   posts: mapValues(posts, singlePostPage),
 };
