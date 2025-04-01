@@ -10,13 +10,12 @@ export const naturalOrder = new Intl.Collator(undefined, {
 export async function clearFiles(folderPath) {
   folderPath = path.resolve(process.cwd(), folderPath);
   try {
-    const directory = await fs.opendir(folderPath);
-    for await (const entry of directory) {
-      if (entry.isFile()) {
-        const filePath = path.join(folderPath, entry.name);
-        await fs.unlink(filePath);
-      }
-    }
+    const entries = await fs.readdir(folderPath, { withFileTypes: true });
+    await Promise.all(
+      entries.map((entry) =>
+        fs.rm(path.join(folderPath, entry.name), { recursive: true })
+      )
+    );
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
@@ -26,15 +25,13 @@ export async function clearFiles(folderPath) {
 // names as keys and file content buffers as values
 export async function readFiles(folderPath) {
   folderPath = path.resolve(process.cwd(), folderPath);
-  const directory = await fs.opendir(folderPath);
 
   // Collect the directory entries
-  const directoryEntries = [];
-  for await (const entry of directory) {
-    directoryEntries.push(entry);
-  }
+  const directoryEntries = await fs.readdir(folderPath, {
+    withFileTypes: true,
+  });
 
-  // Map entries to file buffer or subfolder
+  // Map directory entries to file buffer or subfolder
   const entries = await Promise.all(
     directoryEntries.map(async (entry) => {
       const key = entry.name;
@@ -53,21 +50,22 @@ export async function readFiles(folderPath) {
 }
 
 // Write out an object holding file names as keys and file content buffers as
-// values to a folder. Create the folder if it doesn't exist.
+// values to a folder.
 export async function writeFiles(folderPath, files) {
   folderPath = path.resolve(process.cwd(), folderPath);
+  // Create the folder if it doesn't exist
   await fs.mkdir(folderPath, { recursive: true });
-  for (const [fileName, contents] of Object.entries(files)) {
-    const filePath = path.join(folderPath, fileName);
-    if (isPlainObject(contents)) {
-      // Subfolder
-      const subfolderPath = path.join(folderPath, fileName);
-      await writeFiles(subfolderPath, contents);
-    } else {
-      // File
-      await fs.writeFile(filePath, contents);
-    }
-  }
+  // Write out all the files
+  await Promise.all(
+    Object.entries(files).map(async ([fileName, contents]) => {
+      const entryPath = path.join(folderPath, fileName);
+      return isPlainObject(contents)
+        ? // Subfolder
+          writeFiles(entryPath, contents)
+        : // File
+          fs.writeFile(entryPath, contents);
+    })
+  );
 }
 
 // Quick test: return true if object is a plain object, doesn't handle
