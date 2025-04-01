@@ -37,7 +37,7 @@ export const multiPostPage = (paginated) =>
             : ""
         }
       </p>
-        <footer>
+      <footer>
         <a href="/feed.xml">RSS feed</a>
         <a href="/feed.json">JSON feed</a>
         <a href="https://github.com/WebOrigami/pondlife">View source</a>
