@@ -1,11 +1,11 @@
-import fs from "node:fs/promises";
+import fs from "node:fs";
 import path from "node:path";
 import drawdown from "./drawdown.js";
 import { page } from "./templates.js";
 
 // Read the indicated markdown file and return an HTML page for it
-export async function htmlPageForMarkdownFile(markdownPath) {
-  const markdownDocument = await readMarkdownDocument(markdownPath);
+export function htmlPageForMarkdownFile(markdownPath) {
+  const markdownDocument = readMarkdownDocument(markdownPath);
   const htmlDocument = markdownDocumentToHtml(markdownDocument);
   const markdownFileName = path.basename(markdownPath);
   const htmlFileName = markdownFileName.replace(/\.md$/, ".html");
@@ -96,7 +96,7 @@ export function paginate(object, size = 10) {
   return paginated;
 }
 
-export async function readMarkdownDocument(filePath) {
-  const markdown = await fs.readFile(filePath);
+export function readMarkdownDocument(filePath) {
+  const markdown = fs.readFileSync(filePath);
   return markdownDocument(markdown);
 }

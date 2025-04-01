@@ -28,11 +28,11 @@ const feed = jsonFeed(posts);
 
 // Consolidate all site resources into a single object
 export default {
-  "about.html": await htmlPageForMarkdownFile(relativePath("about.md")),
-  assets: await files.readFiles(relativePath("assets")),
+  "about.html": htmlPageForMarkdownFile(relativePath("about.md")),
+  assets: files.readFiles(relativePath("assets")),
   "feed.json": JSON.stringify(feed, null, 2),
   "feed.xml": rss(feed),
-  images: await files.readFiles(relativePath("../images")),
+  images: files.readFiles(relativePath("../images")),
   "index.html": pages["1.html"], // same as first page in pages area
   pages,
   posts: mapValues(posts, singlePostPage),

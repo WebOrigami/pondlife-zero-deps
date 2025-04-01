@@ -3,7 +3,7 @@ import { mapValues, markdownDocument } from "./utilities.js";
 
 // Read markdown files
 const markdownFolder = new URL("../markdown", import.meta.url).pathname;
-const markdownFiles = await readFiles(markdownFolder);
+const markdownFiles = readFiles(markdownFolder);
 
 // Convert to markdown documents, also parse date from file name
 const markdownDocuments = mapValues(markdownFiles, (buffer, key) => ({
