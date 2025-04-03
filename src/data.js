@@ -1,5 +1,5 @@
 import { readFiles } from "./files.js";
-import { mapValues, markdownDocument } from "./utilities.js";
+import { mapValues, markdownDocument, parseDate } from "./utilities.js";
 
 // Read markdown files
 const markdownFolder = new URL("../markdown", import.meta.url).pathname;
@@ -8,7 +8,7 @@ const markdownFiles = await readFiles(markdownFolder);
 // Convert to markdown documents, also parse date from file name
 const markdownDocuments = mapValues(markdownFiles, (buffer, key) => ({
   ...markdownDocument(buffer),
-  date: new Date(key.replace(/.md$/, "")),
+  date: parseDate(key),
 }));
 
 // Entries are sorted by date; reverse for latest first
