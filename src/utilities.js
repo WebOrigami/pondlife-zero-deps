@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import drawdown from "./drawdown.js";
-import { page } from "./templates.js";
+import page from "./templates/page.js";
 
 // Read the indicated markdown file and return an HTML page for it
 export async function htmlPageForMarkdownFile(markdownPath) {
@@ -14,12 +14,17 @@ export async function htmlPageForMarkdownFile(markdownPath) {
 
 // Create a new object by applying a function to each [key, value] pair
 export function mapEntries(object, fn) {
-  return Object.fromEntries(Object.entries(object).map(fn));
+  return Object.fromEntries(
+    Object.entries(object).map(([key, value]) => fn(value, key, object))
+  );
 }
 
-// Create a new object by mapping each value
+// Create a new object by mapping each value; keep the keys the same
 export function mapValues(object, fn) {
-  return mapEntries(object, ([key, value]) => [key, fn(value, key)]);
+  return mapEntries(object, (value, key, object) => [
+    key,
+    fn(value, key, object),
+  ]);
 }
 
 // If the text has front matter, parse it and return the object along with a
@@ -57,7 +62,7 @@ export function markdownDocumentToHtml(markdownDocument) {
 
 // Convert a collection of markdown documents to HTML
 export function markdownDocumentsToHtml(markdownDocuments) {
-  return mapEntries(markdownDocuments, ([key, document]) => [
+  return mapEntries(markdownDocuments, (document, key) => [
     key.replace(/\.md$/, ".html"),
     markdownDocumentToHtml(document),
   ]);

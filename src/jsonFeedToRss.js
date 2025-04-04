@@ -1,23 +1,10 @@
-const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
 /**
  * Convert an object in JSON Feed format to RSS XML text
+ *
+ * @param {any} jsonFeed
+ * @param {any} options
  */
-export default function rss(jsonFeed, options = {}) {
+export default function jsonFeedToRss(jsonFeed, options = {}) {
   const { description, home_page_url, items, title } = jsonFeed;
 
   let { feed_url, language } = options;
@@ -95,6 +82,21 @@ function escapeXml(text) {
 
 // RSS wants dates in RFC-822.
 function toRFC822Date(date) {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const day = days[date.getUTCDay()];
   const dayOfMonth = date.getUTCDate().toString().padStart(2, "0");
   const month = months[date.getUTCMonth()];
