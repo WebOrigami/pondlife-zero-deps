@@ -1,24 +1,20 @@
-import markdownDocuments from "./data.js";
 import * as files from "./files.js";
 import jsonFeed from "./jsonFeed.js";
 import jsonFeedToRss from "./jsonFeedToRss.js";
+import posts from "./posts.js";
 import multiPostPage from "./templates/multiPostPage.js";
 import singlePostPage from "./templates/singlePostPage.js";
 import {
   htmlPageForMarkdownFile,
   mapEntries,
   mapValues,
-  markdownDocumentsToHtml,
   paginate,
 } from "./utilities.js";
 
 // Return the path relative to this module
 const relativePath = (filePath) => new URL(filePath, import.meta.url).pathname;
 
-// Convert markdown documents to HTML
-const posts = markdownDocumentsToHtml(markdownDocuments);
-
-// Group posts into sets of 10
+// Group posts into pages of 10
 const pages = mapEntries(paginate(posts, 10), (paginated, index) => [
   `${parseInt(index) + 1}.html`, // names will be `1.html`, `2.html`, ...
   multiPostPage(paginated),
@@ -27,7 +23,9 @@ const pages = mapEntries(paginate(posts, 10), (paginated, index) => [
 // Convert posts to a feed object in JSON Feed schema
 const feed = jsonFeed(posts);
 
-// Consolidate all site resources into a single object
+//
+// This is the primary representation of the site as an object
+//
 export default {
   "about.html": await htmlPageForMarkdownFile(relativePath("about.md")),
   assets: await files.readFiles(relativePath("assets")),

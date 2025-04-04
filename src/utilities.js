@@ -3,6 +3,20 @@ import path from "node:path";
 import drawdown from "./drawdown.js";
 import page from "./templates/page.js";
 
+// Given a set of documents, add `nextKey` and `previousKey` properties
+export function addNextPrevious(documents) {
+  const keys = Object.keys(documents);
+  const result = {};
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const document = { ...documents[key] };
+    document.nextKey = keys[i + 1];
+    document.previousKey = keys[i - 1];
+    result[key] = document;
+  }
+  return result;
+}
+
 // Read the indicated markdown file and return an HTML page for it
 export async function htmlPageForMarkdownFile(markdownPath) {
   const markdownDocument = await readMarkdownDocument(markdownPath);
@@ -58,14 +72,6 @@ export function markdownDocumentToHtml(markdownDocument) {
     ...markdownDocument,
     body: drawdown(markdownDocument.body),
   };
-}
-
-// Convert a collection of markdown documents to HTML
-export function markdownDocumentsToHtml(markdownDocuments) {
-  return mapEntries(markdownDocuments, (document, key) => [
-    key.replace(/\.md$/, ".html"),
-    markdownDocumentToHtml(document),
-  ]);
 }
 
 /**
