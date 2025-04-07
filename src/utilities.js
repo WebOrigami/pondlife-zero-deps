@@ -28,9 +28,12 @@ export async function htmlPageForMarkdownFile(markdownPath) {
 
 // Create a new object by applying a function to each [key, value] pair
 export function mapEntries(object, fn) {
-  return Object.fromEntries(
-    Object.entries(object).map(([key, value]) => fn(value, key, object))
-  );
+  // Get the object's [key, value] pairs
+  const entries = Object.entries(object);
+  // Map each entry to a new [key, value] pair
+  const mappedEntries = entries.map(([key, value]) => fn(value, key, object));
+  // Create a new object from the mapped entries
+  return Object.fromEntries(mappedEntries);
 }
 
 // Create a new object by mapping each value; keep the keys the same

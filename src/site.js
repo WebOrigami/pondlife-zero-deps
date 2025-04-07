@@ -28,10 +28,10 @@ const feed = jsonFeed(posts);
 //
 export default {
   "about.html": await htmlPageForMarkdownFile(relativePath("about.md")),
-  assets: await files.readFiles(relativePath("assets")),
+  assets: await files.read(relativePath("assets")),
   "feed.json": JSON.stringify(feed, null, 2),
   "feed.xml": jsonFeedToRss(feed),
-  images: await files.readFiles(relativePath("../images")),
+  images: await files.read(relativePath("../images")),
   "index.html": pages["1.html"], // same as first page in pages area
   pages,
   posts: mapValues(posts, singlePostPage),

@@ -1,4 +1,4 @@
-import { readFiles } from "./files.js";
+import * as files from "./files.js";
 import {
   addNextPrevious,
   mapEntries,
@@ -8,14 +8,16 @@ import {
   parseDate,
 } from "./utilities.js";
 
-// Data pipeline: reads in a collection of Buffer objects representing the
-// markdown files, applies a number of transformations, and produces a
-// reverse-chronological ordered collection of document objects ready for
-// rendering in various forms.
+// Post data pipeline: reads in a folder of markdown files, applies a number of
+// transformations, and produces an object containing the posts ready for
+// rendering in various forms. That top object has its keys in reverse
+// chronological order, so the latest posts are first. Each post is an object
+// with a `body` property containing the HTML content, front matter properties,
+// and calculated properties.
 
-// Read markdown files into an object with Buffer values
+// Read the entire markdown folder into memory as an object with Buffer values
 const markdownFolder = new URL("../markdown", import.meta.url).pathname;
-const markdownFiles = await readFiles(markdownFolder);
+const markdownFiles = await files.read(markdownFolder);
 
 // Convert to markdown documents; also parse date from file name
 const markdownDocuments = mapValues(markdownFiles, (buffer, key) => ({
