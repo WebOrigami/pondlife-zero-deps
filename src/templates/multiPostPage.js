@@ -33,11 +33,11 @@ export default (paginated) => {
             `
             : ""
         }
-       </p>
-       <footer>
-       <a href="/feed.xml">RSS feed</a>
-       <a href="/feed.json">JSON feed</a>
-       <a href="https://github.com/WebOrigami/origami-blog-start">View source</a>
+      </p>
+      <footer>
+        <a href="/feed.xml">RSS feed</a>
+        <a href="/feed.json">JSON feed</a>
+        <a href="https://github.com/WebOrigami/origami-blog-start">View source</a>
       </footer>
     `,
   });
