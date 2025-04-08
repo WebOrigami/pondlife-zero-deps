@@ -16,8 +16,8 @@ const relativePath = (filePath) => new URL(filePath, import.meta.url).pathname;
 
 // Group posts into pages of 10
 const pages = mapEntries(paginate(posts, 10), (paginated, index) => [
-  `${parseInt(index) + 1}.html`, // names will be `1.html`, `2.html`, ...
-  multiPostPage(paginated),
+  `${parseInt(index) + 1}.html`, // Change names to `1.html`, `2.html`, ...
+  multiPostPage(paginated), // Apply template to the set of 10 posts
 ]);
 
 // Convert posts to a feed object in JSON Feed schema
