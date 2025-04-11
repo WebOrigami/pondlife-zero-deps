@@ -1,4 +1,4 @@
-// A single blog post in a list
+// A single blog post, on its own or in a list
 export default (post, key) => `
   <section>
     <a href="/posts/${key}">

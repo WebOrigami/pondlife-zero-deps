@@ -5,9 +5,9 @@ import posts from "./posts.js";
 import multiPostPage from "./templates/multiPostPage.js";
 import singlePostPage from "./templates/singlePostPage.js";
 import {
-  htmlPageForMarkdownFile,
-  mapEntries,
+  mapObject,
   mapValues,
+  markdownFileToHtmlPage,
   paginate,
 } from "./utilities.js";
 
@@ -15,7 +15,7 @@ import {
 const relativePath = (filePath) => new URL(filePath, import.meta.url).pathname;
 
 // Group posts into pages of 10
-const pages = mapEntries(paginate(posts, 10), (paginated, index) => [
+const pages = mapObject(paginate(posts, 10), (paginated, index) => [
   `${parseInt(index) + 1}.html`, // Change names to `1.html`, `2.html`, ...
   multiPostPage(paginated), // Apply template to the set of 10 posts
 ]);
@@ -27,7 +27,7 @@ const feed = jsonFeed(posts);
 // This is the primary representation of the site as an object
 //
 export default {
-  "about.html": await htmlPageForMarkdownFile(relativePath("about.md")),
+  "about.html": await markdownFileToHtmlPage(relativePath("about.md")),
   assets: await files.read(relativePath("assets")),
   "feed.json": JSON.stringify(feed, null, 2),
   "feed.xml": jsonFeedToRss(feed),

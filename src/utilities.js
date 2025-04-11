@@ -1,5 +1,4 @@
 import fs from "node:fs/promises";
-import path from "node:path";
 import drawdown from "./drawdown.js";
 import page from "./templates/page.js";
 
@@ -17,17 +16,8 @@ export function addNextPrevious(documents) {
   return result;
 }
 
-// Read the indicated markdown file and return an HTML page for it
-export async function htmlPageForMarkdownFile(markdownPath) {
-  const markdownDocument = await readMarkdownDocument(markdownPath);
-  const htmlDocument = markdownDocumentToHtml(markdownDocument);
-  const markdownFileName = path.basename(markdownPath);
-  const htmlFileName = markdownFileName.replace(/\.md$/, ".html");
-  return page(htmlDocument, htmlFileName);
-}
-
 // Create a new object by applying a function to each [key, value] pair
-export function mapEntries(object, fn) {
+export function mapObject(object, fn) {
   // Get the object's [key, value] pairs
   const entries = Object.entries(object);
   // Map each entry to a new [key, value] pair
@@ -38,7 +28,7 @@ export function mapEntries(object, fn) {
 
 // Create a new object by mapping each value; keep the keys the same
 export function mapValues(object, fn) {
-  return mapEntries(object, (value, key, object) => [
+  return mapObject(object, (value, key, object) => [
     key,
     fn(value, key, object),
   ]);
@@ -77,6 +67,13 @@ export function markdownDocumentToHtml(markdownDocument) {
   };
 }
 
+// Read the indicated markdown file and return an HTML page for it
+export async function markdownFileToHtmlPage(markdownPath) {
+  const markdownDocument = await readMarkdownDocument(markdownPath);
+  const htmlDocument = markdownDocumentToHtml(markdownDocument);
+  return page(htmlDocument);
+}
+
 /**
  * Return a new grouping of the object's values into chunks of the specified
  * size.
@@ -108,16 +105,6 @@ export function paginate(object, size = 10) {
   }
 
   return paginated;
-}
-
-// Parse a YYYY-MM-DD date from the start of the text.
-export function parseDate(text) {
-  const match = text.match(/^(?<date>\d\d\d\d-\d\d-\d\d)/);
-  // Dates will end up in GMT, so we shift the date to the desired time zone.
-  // This sample content uses noon in U.S. Eastern Time, which is UTC minus 5
-  // hours. See https://en.wikipedia.org/wiki/List_of_UTC_offsets for a list of
-  // UTC offsets; replace with the time zone you want for your posts.
-  return new Date(`${match.groups.date}T12:00-05:00`);
 }
 
 export async function readMarkdownDocument(filePath) {

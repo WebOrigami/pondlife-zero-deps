@@ -1,11 +1,11 @@
 import * as files from "./files.js";
+import parseDate from "./parseDate.js";
 import {
   addNextPrevious,
-  mapEntries,
+  mapObject,
   mapValues,
   markdownDocument,
   markdownDocumentToHtml,
-  parseDate,
 } from "./utilities.js";
 
 // Post data pipeline: reads in a folder of markdown files, applies a number of
@@ -26,7 +26,7 @@ const markdownDocuments = mapValues(markdownFiles, (buffer, key) => ({
 }));
 
 // Transform to HTML
-const htmlDocuments = mapEntries(markdownDocuments, (document, key) => [
+const htmlDocuments = mapObject(markdownDocuments, (document, key) => [
   // Change the keys from `.md` names to `.html` names
   key.replace(/\.md$/, ".html"),
   // Convert the markdown content to HTML
