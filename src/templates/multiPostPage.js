@@ -4,13 +4,13 @@ import postFragment from "./postFragment.js";
 
 // A page showing multiple posts
 export default (paginated) => {
-  const { items, nextPage, previousPage } = paginated;
+  const { items, nextPage, pageNumber, previousPage } = paginated;
   const postFragments = Object.entries(items).map(([key, post]) =>
     postFragment(post, key)
   );
   return page({
-    title: siteInfo.title,
-    area: "home",
+    title: `${siteInfo.title} — Page ${pageNumber}`,
+    area: pageNumber === 1 ? "home" : null,
     body: `
       <h1>${siteInfo.title}</h1>
       <p>${siteInfo.description}</p>
@@ -37,7 +37,7 @@ export default (paginated) => {
       <footer>
         <a href="/feed.xml">RSS feed</a>
         <a href="/feed.json">JSON feed</a>
-        <a href="https://github.com/WebOrigami/origami-blog-start">View source</a>
+        <a href="https://github.com/WebOrigami/pondlife-zero-deps">View source</a>
       </footer>
     `,
   });

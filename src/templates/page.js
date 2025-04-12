@@ -4,9 +4,9 @@ import siteInfo from "../siteInfo.js";
 export default (page) => `<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/assets/styles.css">
     <link rel="alternate" type="application/rss+xml" title="${
       siteInfo.description
     }" href="/feed.xml">
