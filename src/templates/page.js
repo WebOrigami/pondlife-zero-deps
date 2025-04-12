@@ -9,10 +9,10 @@ export default (page) => `<!DOCTYPE html>
     <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="${
       siteInfo.description
-    }" href="feed.xml">
+    }" href="/feed.xml">
     <link rel="alternate" type="application/json" title="${
       siteInfo.description
-    }" href="feed.json">
+    }" href="/feed.json">
     <title>${page.title}</title>
   </head>
   <body ${page.area ? `class="${page.area}"` : ""}>
