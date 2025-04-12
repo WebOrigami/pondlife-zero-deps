@@ -10,7 +10,8 @@ export default (posts) => ({
 
   // Map the post data to JSON Feed items
   items: Object.entries(posts).map(([slug, post]) => ({
-    content_html: post.body,
+    // Patch image URLs to be absolute
+    content_html: post.body.replace(/src="\//g, `src="${siteInfo.url}/`),
     date_published: post.date,
     id: `${siteInfo.url}/posts/${slug}`,
     title: post.title,
