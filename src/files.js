@@ -18,7 +18,9 @@ export async function clear(folderPath) {
       )
     );
   } catch (error) {
-    if (error.code !== "ENOENT") throw error;
+    if (error.code !== "ENOENT") {
+      throw error;
+    }
   }
 }
 
