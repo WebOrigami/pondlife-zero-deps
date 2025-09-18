@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-export const naturalOrder = new Intl.Collator(undefined, {
+// For sorting in natural order
+const naturalOrder = new Intl.Collator(undefined, {
   numeric: true,
 }).compare;
 
@@ -16,7 +17,9 @@ export function clearFiles(folderPath) {
       fs.rmSync(filePath, { recursive: true });
     }
   } catch (error) {
-    if (error.code !== "ENOENT") throw error;
+    if (error.code !== "ENOENT") {
+      throw error;
+    }
   }
 }
 
@@ -39,27 +42,24 @@ export function readFiles(folderPath) {
   });
 
   // Sort entries by name
-  entries.sort(([a], [b]) => naturalOrder(a, b));
+  entries.sort(([keyA], [keyB]) => naturalOrder(keyA, keyB));
 
   return Object.fromEntries(entries);
 }
 
 // Write out an object holding file names as keys and file content buffers as
-// values to a folder. Create the folder if it doesn't exist.
+// values to a folder.
 export function writeFiles(folderPath, files) {
   folderPath = path.resolve(process.cwd(), folderPath);
+  // Create the folder if it doesn't exist
   fs.mkdirSync(folderPath, { recursive: true });
-  for (const [fileName, contents] of Object.entries(files)) {
-    const filePath = path.join(folderPath, fileName);
-    if (isPlainObject(contents)) {
-      // Subfolder
-      const subfolderPath = path.join(folderPath, fileName);
-      writeFiles(subfolderPath, contents);
-    } else {
-      // File
-      fs.writeFileSync(filePath, contents);
-    }
-  }
+  // Write out all the files
+  Object.entries(files).forEach(([fileName, contents]) => {
+    const entryPath = path.join(folderPath, fileName);
+    return isPlainObject(contents)
+      ? writeFiles(entryPath, contents) // Subfolder
+      : fs.writeFileSync(entryPath, contents); // File
+  });
 }
 
 // Quick test: return true if object is a plain object, doesn't handle

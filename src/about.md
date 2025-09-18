@@ -9,4 +9,4 @@ I came to this pond in the woods because I want to live deliberately, to focus o
 
 I want to live fully and deeply, to get everything I can out of life. My goal is to strip away all the junk. If life is difficult, I want to face that difficulty head-on and share that truth with the world. If it's beautiful, I want to experience that fully and share it here on this blog.
 
-[View source](https://github.com/WebOrigami/pondlife)
+[View source](https://github.com/WebOrigami/pondlife-zero-deps)

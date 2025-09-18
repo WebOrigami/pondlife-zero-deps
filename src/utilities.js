@@ -1,7 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import drawdown from "./drawdown.js";
-import { page } from "./templates.js";
+import page from "./templates/page.js";
+
+// Given a set of documents, add `nextKey` and `previousKey` properties
+export function addNextPrevious(documents) {
+  const keys = Object.keys(documents);
+  const result = {};
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const document = { ...documents[key] };
+    document.nextKey = keys[i + 1];
+    document.previousKey = keys[i - 1];
+    result[key] = document;
+  }
+  return result;
+}
 
 // Read the indicated markdown file and return an HTML page for it
 export function htmlPageForMarkdownFile(markdownPath) {
@@ -13,13 +27,21 @@ export function htmlPageForMarkdownFile(markdownPath) {
 }
 
 // Create a new object by applying a function to each [key, value] pair
-export function mapEntries(object, fn) {
-  return Object.fromEntries(Object.entries(object).map(fn));
+export function mapObject(object, fn) {
+  // Get the object's [key, value] pairs
+  const entries = Object.entries(object);
+  // Map each entry to a new [key, value] pair
+  const mappedEntries = entries.map(([key, value]) => fn(value, key, object));
+  // Create a new object from the mapped entries
+  return Object.fromEntries(mappedEntries);
 }
 
-// Create a new object by mapping each value
+// Create a new object by mapping each value; keep the keys the same
 export function mapValues(object, fn) {
-  return mapEntries(object, ([key, value]) => [key, fn(value, key)]);
+  return mapObject(object, (value, key, object) => [
+    key,
+    fn(value, key, object),
+  ]);
 }
 
 // If the text has front matter, parse it and return the object along with a
@@ -55,12 +77,11 @@ export function markdownDocumentToHtml(markdownDocument) {
   };
 }
 
-// Convert a collection of markdown documents to HTML
-export function markdownDocumentsToHtml(markdownDocuments) {
-  return mapEntries(markdownDocuments, ([key, document]) => [
-    key.replace(/\.md$/, ".html"),
-    markdownDocumentToHtml(document),
-  ]);
+// Read the indicated markdown file and return an HTML page for it
+export async function markdownFileToHtmlPage(markdownPath) {
+  const markdownDocument = await readMarkdownDocument(markdownPath);
+  const htmlDocument = markdownDocumentToHtml(markdownDocument);
+  return page(htmlDocument);
 }
 
 /**
